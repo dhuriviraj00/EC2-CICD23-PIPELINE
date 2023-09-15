@@ -1,14 +1,20 @@
-name: CI/CD Pipeline
+name: Push-to-EC2
+
+# Trigger deployment only on push to master branch
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  continuous-integration:
+  deploy:
+    name: Deploy to EC2 on master branch push
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
+
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
@@ -16,32 +22,17 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
-    - name:Executing remote ssh commands using ssh key
+
+      - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HOST_DNS }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}  
-     # Step 1
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-     # Step 2
-      - name: Create CodeDeploy Deployment
-        id: deploy
-        run: |
-          aws deploy create-deployment \
-            --application-name Git_Application \
-            --deployment-group-name development_gropup \
-            --deployment-config-name CodeDeployDefault.OneAtATime \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
-         script: |
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             sudo apt-get -y update
             sudo apt-get install -y apache2
             sudo systemctl start apache2
             sudo systemctl enable apache2
             cd $GITHUB_WORKSPACE  # Use the GitHub workspace directory
-            sudo cp -r * /var/www/html  # Copy files to the Apache web directory 
+            sudo cp -r * /var/www/html  # Copy files to the Apache web directory
