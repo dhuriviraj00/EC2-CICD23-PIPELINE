@@ -1,8 +1,5 @@
 #!/bin/bash
-# Check if Apache2 is running
-isApacheRunning=$(systemctl is-active apache2)
-
-# Stop Apache2 if it's running
-if [ "$isApacheRunning" = "active" ]; then
-    sudo systemctl stop apache2
+isExistApp=`pgrep apache2`
+if [[ -n  $isExistApp ]]; then
+    sudo systemctl apache2 stop
 fi
