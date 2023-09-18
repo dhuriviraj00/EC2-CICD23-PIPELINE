@@ -1,8 +1,8 @@
 #!/bin/bash
-isExistApp=$(pgrep http)
+isExistApp=$(pgrep httpd)
 
 if [[ -n $isExistApp ]]; then
-    sudo systemctl stop http
+    sudo systemctl stop httpd
     echo "Apache2 has been stopped."
 else
     echo "Apache2 is not running."
