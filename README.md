@@ -1,2 +1,1 @@
-# EC2-CICD23-PIPELINE
-EC2-CICD23- PIPELINE-GITHUB ACTION
+# Host Your Resume on AWS EC2 with a CI/CD Setup Using GitHub Actions
