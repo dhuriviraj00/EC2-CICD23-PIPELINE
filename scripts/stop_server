@@ -2,7 +2,7 @@
 isExistApp=$(pgrep apache2)
 
 if [[ -n $isExistApp ]]; then
-    sudo systemctl stop apache2
+    sudo systemctl stop apache2.service
     echo "Apache2 has been stopped."
 else
     echo "Apache2 is not running."
