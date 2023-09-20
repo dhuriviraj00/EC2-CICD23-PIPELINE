@@ -37,14 +37,4 @@ jobs:
           sudo systemctl start apache2
           sudo systemctl enable apache2
 
-      - name: Create YAML file in test environment
-        run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
-            echo "Test environment YAML configuration" > test-config.yml
-          fi
-
-      - name: Create YAML file in production environment
-        run: |
-          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
-            echo "Production environment YAML configuration" > production-config.yml
-          fi
+      
