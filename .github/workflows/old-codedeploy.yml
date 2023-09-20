@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy-development:
-    name: Deploy to Development EC2 on master branch push
+    name: Development on master branch push
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,10 @@ jobs:
             --deployment-group-name development_deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+          if [ $? -ne 0 ]; then
+            echo "Deployment to Development failed."
+            exit 1
+          fi
 
       - name: Install and start Apache for Development
         run: |
@@ -38,7 +42,7 @@ jobs:
           sudo systemctl enable apache2
 
   deploy-production:
-    name: Deploy to Production EC2 on master branch push
+    name: Production on master branch push
     runs-on: ubuntu-latest
 
     steps:
@@ -60,6 +64,10 @@ jobs:
             --deployment-group-name production_deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+          if [ $? -ne 0 ]; then
+            echo "Deployment to Production failed."
+            exit 1
+          fi
 
       - name: Install and start Apache for Production
         run: |
