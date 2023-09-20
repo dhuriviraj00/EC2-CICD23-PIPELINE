@@ -29,10 +29,6 @@ jobs:
             --deployment-group-name development_deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
-          if [ $? -ne 0 ]; then
-            echo "Deployment to Development failed."
-            exit 1
-          fi
 
       - name: Install and start Apache for Development
         run: |
@@ -48,14 +44,6 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
-
-      - name: Configure AWS credentials for Production
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-
       - name: Create CodeDeploy Deployment for Production
         id: deploy-production
         run: |
@@ -64,10 +52,6 @@ jobs:
             --deployment-group-name production_deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
-          if [ $? -ne 0 ]; then
-            echo "Deployment to Production failed."
-            exit 1
-          fi
 
       - name: Install and start Apache for Production
         run: |
