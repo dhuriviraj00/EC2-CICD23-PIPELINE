@@ -1,13 +1,14 @@
-name: Deploy to EC2 on master branch push
+name: Deploy to EC2
 
 on:
   push:
     branches:
       - master
+      - develop  # Assuming 'develop' is your development branch
 
 jobs:
-  deploy:
-    name: Deploy to EC2 on master branch push
+  deploy_production:
+    name: Deploy to EC2 on master branch push (Production)
     runs-on: ubuntu-latest
 
     steps:
@@ -21,24 +22,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Create CodeDeploy Deployment
-        id: deploy
+      - name: Create CodeDeploy Deployment (Production)
+        id: deploy_production
         run: |
           aws deploy create-deployment \
             --application-name Git_Application \
-            --deployment-group-name deployment_group \
+            --deployment-group-name deployment_group_production \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
-      - name: Install and start Apache
+      - name: Install and start Apache (Production)
         run: |
           sudo apt-get -y update
           sudo apt-get install -y apache2
           sudo systemctl start apache2
           sudo systemctl enable apache2
-jobs:
-  deploy:
-    name: development  to EC2 on master branch push
+
+  deploy_development:
+    name: Deploy to EC2 on develop branch push (Development)
     runs-on: ubuntu-latest
 
     steps:
@@ -52,19 +53,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Create CodeDeploy Deployment
-        id: deploy
+      - name: Create CodeDeploy Deployment (Development)
+        id: deploy_development
         run: |
           aws deploy create-deployment \
             --application-name Git_Application \
-            --deployment-group-name deployment_group \
+            --deployment-group-name deployment_group_development \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
-      - name: Install and start Apache
+      - name: Install and start Apache (Development)
         run: |
           sudo apt-get -y update
           sudo apt-get install -y apache2
           sudo systemctl start apache2
           sudo systemctl enable apache2
-      
