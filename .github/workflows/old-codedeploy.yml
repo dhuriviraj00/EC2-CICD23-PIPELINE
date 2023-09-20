@@ -1,6 +1,5 @@
-name: Push-to-EC2
+name: Deploy to EC2 on master branch push
 
-# Trigger deployment only on push to master branch
 on:
   push:
     branches:
@@ -12,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the files
+      - name: Checkout the code
         uses: actions/checkout@v2
 
       - name: Configure AWS credentials
@@ -37,3 +36,15 @@ jobs:
           sudo apt-get install -y apache2
           sudo systemctl start apache2
           sudo systemctl enable apache2
+
+      - name: Create YAML file in test environment
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "Test environment YAML configuration" > test-config.yml
+          fi
+
+      - name: Create YAML file in production environment
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            echo "Production environment YAML configuration" > production-config.yml
+          fi
