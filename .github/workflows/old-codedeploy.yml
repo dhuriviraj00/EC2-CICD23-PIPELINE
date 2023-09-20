@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy-development:
-    name: Deploy to Development
+    name: Development
     runs-on: ubuntu-latest
 
     steps:
@@ -38,7 +38,7 @@ jobs:
           sudo systemctl enable apache2
 
   deploy-production:
-    name: Deploy to Production
+    name: Production
     runs-on: ubuntu-latest
 
     steps:
