@@ -37,10 +37,10 @@ jobs:
           sudo systemctl start apache2
           sudo systemctl enable apache2
 
+          
   deploy-production:
     name: Production
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
