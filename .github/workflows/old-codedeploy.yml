@@ -25,7 +25,7 @@ jobs:
         run: |
           aws deploy create-deployment \
             --application-name Git_Application \
-            --deployment-group-name development_group \
+            --deployment-group-name deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
@@ -54,7 +54,7 @@ jobs:
         run: |
           aws deploy create-deployment \
             --application-name Git_Application \
-            --deployment-group-name production_group \
+            --deployment-group-name deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
