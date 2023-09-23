@@ -2,8 +2,7 @@ name: Development and Production on Master Branch Push
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 
 jobs:
   deploy-development:
@@ -20,32 +19,29 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Step 3 - Create CodeDeploy Deployment for Development
-        id: deploy-development
+  approve-development:
+    name: Approve Development Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-development]  # Wait for the Development job to finish
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Approve Deployment
+        id: approval
         run: |
-          aws deploy create-deployment \
-            --application-name Git_Application \
-            --deployment-group-name deployment_group \
-            --deployment-config-name CodeDeployDefault.OneAtATime \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
-    
-      - name: Step 4 - Check Deployment Status
-        id: deployment-status
-        run: |
-          # You can use AWS CLI or other tools to check the status of the deployment
-          # For example, you can check if the deployment is successful
-          deployment_status=$(aws deploy get-deployment --deployment-id ${{ steps.deploy-development.outputs.deploymentId }} --query 'deploymentInfo.status' --output text)
-          if [ "$deployment_status" == "Succeeded" ]; then
-            echo "Development deployment succeeded."
+          # Add code to prompt for approval (e.g., using a comment or an external system)
+          # If approved, set the 'approved' output to 'true', otherwise, set it to 'false'
+          # For example, you can use GitHub API to check for comments or use a custom logic
+          # Here's a simple example:
+          if [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
+            echo "::set-output name=approved::true"
           else
-            echo "Development deployment failed or is still in progress."
-            exit 1
+            echo "::set-output name=approved::false"
           fi
 
   deploy-production:
     runs-on: ubuntu-latest
-    needs: [deploy-development]
-    if: github.ref == 'refs/heads/master' && success()
+    needs: [approve-development]  # Wait for the approval step
+    if: github.ref == 'refs/heads/master' && needs.approve-development.outputs.approved == 'true'
     steps:
       - name: Step 1 - Configure AWS credentials for Deployment
         uses: aws-actions/configure-aws-credentials@v1
@@ -54,6 +50,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Step 2 - Deploy to Production
+      - name: Step 2 - Create CodeDeploy Deployment for Production
+        id: deploy-production
         run: |
-          # Add your production deployment steps here
+          aws deploy create-deployment \
+            --application-name Git_Application \
+            --deployment-group-name deployment_group \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+
+      - name: Step 3 - Install and start Apache for Production
+        run: |
+          sudo apt-get -y update
+          sudo apt-get install -y apache2
+          sudo systemctl start apache2
+          sudo systemctl enable apache2
