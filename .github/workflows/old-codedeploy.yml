@@ -8,7 +8,7 @@ jobs:
   deploy-development:
     name: Development
     runs-on: ubuntu-latest
-    steps:
+    steps:1
       - name: Checkout the code
         uses: actions/checkout@v2
 
@@ -19,29 +19,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-  approve-development:
-    name: Approve Development Deployment
-    runs-on: ubuntu-latest
-    needs: [deploy-development]  # Wait for the Development job to finish
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - name: Approve Deployment
-        id: approval
-        run: |
-          # Add code to prompt for approval (e.g., using a comment or an external system)
-          # If approved, set the 'approved' output to 'true', otherwise, set it to 'false'
-          # For example, you can use GitHub API to check for comments or use a custom logic
-          # Here's a simple example:
-          if [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
-            echo "::set-output name=approved::true"
-          else
-            echo "::set-output name=approved::false"
-          fi
-
   deploy-production:
     runs-on: ubuntu-latest
-    needs: [approve-development]  # Wait for the approval step
-    if: github.ref == 'refs/heads/master' && needs.approve-development.outputs.approved == 'true'
+    needs: [deploy-development]  # Assuming this is the job that needs to finish first
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Step 1 - Configure AWS credentials for Deployment
         uses: aws-actions/configure-aws-credentials@v1
@@ -50,8 +31,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Step 2 - Create CodeDeploy Deployment for Production
-        id: deploy-production
+      - name: Step 2 - Create CodeDeploy Deployment for Development
+        id: deploy-development
         run: |
           aws deploy create-deployment \
             --application-name Git_Application \
@@ -59,7 +40,7 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
-      - name: Step 3 - Install and start Apache for Production
+      - name: Step 3 - Install and start Apache for Development
         run: |
           sudo apt-get -y update
           sudo apt-get install -y apache2
