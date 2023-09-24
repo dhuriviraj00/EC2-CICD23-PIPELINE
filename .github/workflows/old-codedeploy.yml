@@ -22,8 +22,8 @@ jobs:
 
       - name: Step 3 - Install AWS CLI
         run: |
-          apt-get update
-          apt-get install -y awscli
+          sudo apt update
+          sudo apt install -y awscli
 
       - name: Upload to S3
         run: |
