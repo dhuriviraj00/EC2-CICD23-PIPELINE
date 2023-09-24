@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /index.html
-    destination: /var/www/devlop.com/public_html
+    destination: /var/www/devlop.com
 hooks:
   BeforeInstall:
     - location: scripts/install_dependencies
