@@ -28,7 +28,7 @@ jobs:
 
       - name: Step 4 - Upload to S3
         run: |
-          aws s3 cp ./your-source-directory s3://your-bucket-name/your-destination-path --recursive
+          https://s3.console.aws.amazon.com/s3/buckets/codepipeline-us-east-2-948395607343?region=us-east-2&tab=objects
 
   deploy-production:
     runs-on: ubuntu-latest
