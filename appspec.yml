@@ -3,7 +3,6 @@ os: linux
 files:
   - source: /index.html
     destination: /var/www/devlop.com
-    destination: /var/www/prod.com
 hooks:
   BeforeInstall:
     - location: scripts/install_dependencies
