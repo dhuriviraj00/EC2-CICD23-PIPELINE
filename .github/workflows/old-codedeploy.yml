@@ -58,9 +58,7 @@ jobs:
             --deployment-group-name deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
-            --s3-location "bucket=${{ secrets.S3_BUCKET }},bundleType=zip,key=application.zip")
-          echo "::set-output name=deployment-id::$deployment_id"
-
+            
       - name: Install and start Apache for Production
         run: |
           sudo apt-get -y update
