@@ -35,8 +35,8 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region us-east-2
-         aws s3 cp https://s3.console.aws.amazon.com/s3/buckets/codepipeline-us-east-2-948395607343?region=us-east-2&tab=objects
-   
+          https://s3.console.aws.amazon.com/s3/buckets/codepipeline-us-east-2-948395607343?region=us-east-2&tab=objects
+
   deploy-production:
     name: Production
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --s3-location "bucket=${{ secrets.S3_BUCKET }},bundleType=zip,key=application.zip")
-             echo "::set-output name=deployment-id::$deployment_id"
+          echo "::set-output name=deployment-id::$deployment_id"
 
       - name: Install and start Apache for Production
         run: |
