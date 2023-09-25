@@ -50,15 +50,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Create CodeDeploy Deployment for Production
+      - name: Step 2 - Create CodeDeploy Deployment for Production
         id: deploy-production
         run: |
-          deployment_id=$(aws deploy create-deployment \
+          aws deploy create-deployment \
             --application-name Git_Application \
             --deployment-group-name deployment_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
-            
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+
       - name: Install and start Apache for Production
         run: |
           sudo apt-get -y update
