@@ -9,6 +9,7 @@ jobs:
   deploy-development:
     name: Development
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -25,12 +26,9 @@ jobs:
           sudo apt update
           sudo apt install -y awscli
 
-      - name: Upload to S3
+      - name: Step 4 - Upload to S3
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region us-east-2
-          https://s3.console.aws.amazon.com/s3/buckets/codepipeline-us-east-2-948395607343?region=us-east-2&tab=objects
+          aws s3 cp ./your-source-directory s3://your-bucket-name/your-destination-path --recursive
 
   deploy-production:
     runs-on: ubuntu-latest
@@ -44,16 +42,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Step 2 - Create CodeDeploy Deployment for Development
-        id: deploy-development
+      - name: Step 2 - Create CodeDeploy Deployment for Production
+        id: deploy-production
         run: |
           aws deploy create-deployment \
-            --application-name Git_Application \
-            --deployment-group-name deployment_group \
+            --application-name Your_Application_Name \
+            --deployment-group-name Your_Deployment_Group_Name \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
-      - name: Step 3 - Install and start Apache for Development
+      - name: Step 3 - Install and start Apache for Production
         run: |
           sudo apt-get -y update
           sudo apt-get install -y apache2
