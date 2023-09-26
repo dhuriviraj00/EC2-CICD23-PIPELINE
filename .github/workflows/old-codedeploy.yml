@@ -58,10 +58,3 @@ jobs:
           sudo apt-get install -y apache2
           sudo systemctl start apache2
           sudo systemctl enable apache2
-
-      - name: Wait for deployment
-        run: |
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-          aws deploy wait deployment-successful --deployment-id ${{ steps.deploy-production.outputs.deploymentId }}
