@@ -34,7 +34,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
           APPLICATION_NAME: ${{ vars.APPLICATION_NAME }}
           DEPLOYMENT_GROUP: ${{ vars.DEPLOYMENT_GROUP }}
         run: |
